@@ -1,6 +1,6 @@
 rule size_hist:
     input:
-        "peaks/{name}.{type}Peak"
+        "peaks/{name}_peaks.{type}Peak"
     output:
         "histograms/{name}_{type}.png"
     shell:
