@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 bin_size = 0.05
-n_bins = 210
+n_bins = 250
 
 def get_hist(lines):
     bins = np.zeros(n_bins, dtype="int")
@@ -20,9 +20,9 @@ if __name__ == "__main__":
         input_lines = sys.stdin
     out_name = sys.argv[2]
     x, y = get_hist(input_lines)
-    N = np.flatnonzero(y)[0]
+    N = 110 #np.flatnonzero(y)[0]
+    print(N)
     plt.plot(y[N:])
     ticks = np.arange(0, y.size-N, (y.size-N)//7)
-    print(ticks)
     plt.xticks(ticks, np.array(np.exp((ticks+N)*bin_size), dtype="int"))
     plt.savefig(out_name)
