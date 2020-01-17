@@ -25,4 +25,6 @@ if __name__ == "__main__":
     plt.plot(y[N:])
     ticks = np.arange(0, y.size-N, (y.size-N)//7)
     plt.xticks(ticks, np.array(np.exp((ticks+N)*bin_size), dtype="int"))
+    plt.xlabel("size")
+    plt.ylabel("count")
     plt.savefig(out_name)
