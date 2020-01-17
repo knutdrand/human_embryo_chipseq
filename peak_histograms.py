@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-bin_size = 0.2
+bin_size = 0.1
 n_bins = 100
 
 def get_hist(lines):
@@ -10,7 +10,7 @@ def get_hist(lines):
     size_bins = (min(s//bin_size, n_bins-1) for s in log_sizes)
     for sb in size_bins:
         bins[int(sb)] += 1
-    return bins
+    return np.exp(np.arange(bins.size)*bin_size), bins
     
 if __name__ == "__main__":
     import sys
@@ -19,6 +19,9 @@ if __name__ == "__main__":
     else:
         input_lines = sys.stdin
     out_name = sys.argv[2]
-    bins = get_hist(input_lines)
-    plt.plot(np.arange(n_bins)*bin_size, bins)
+    x, y = get_hist(input_lines)
+    plt.plot(y)
+    ticks = np.arange(0, y.size, y.size//5)
+    print(ticks)
+    plt.xticks(ticks, np.array(np.exp(ticks*bin_size), dtype="int"))
     plt.savefig(out_name)
