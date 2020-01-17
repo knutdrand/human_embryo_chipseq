@@ -1,7 +1,7 @@
 rule size_hist:
     input:
-        "peaks/{name}_peaks.{type}Peak"
+        "peaks/{name}_{class}.{type}Peak"
     output:
-        "histograms/{name}_{type}.png"
+        "histograms/{name}_{class}_{type}.png"
     shell:
         "python3 peak_histograms.py {input} {output}"
