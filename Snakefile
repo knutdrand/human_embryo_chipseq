@@ -4,4 +4,4 @@ rule size_hist:
     output:
         "histograms/{name}_{type}.png"
     shell:
-        "python3 peak_histograms {input} {output}"
+        "python3 peak_histograms.py {input} {output}"
