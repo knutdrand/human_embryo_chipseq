@@ -32,5 +32,5 @@ rule overlap_hist:
     shell:
         """
 	chiptools overlap_fraction {input} > {output[0]}
-	python3 src/ratio_hist.py {output}
+	python3 src/ratio_histogram.py {output}
 	"""
