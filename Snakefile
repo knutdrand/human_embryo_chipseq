@@ -14,7 +14,7 @@ rule copy_domains:
     shell:
         "mv {input} {output}"
 
-rule copy_domains:
+rule copy_peaks:
     input:
         "../broad_domains/results/{name}_peaks.broadPeak"
     output:
