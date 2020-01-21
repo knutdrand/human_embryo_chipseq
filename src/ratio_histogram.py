@@ -9,7 +9,7 @@ def logit(ratio):
 if __name__ == "__main__":
     import sys
     import os
-    if len(sys.argv>2):
+    if len(sys.argv)>2:
         lines = open(sys.argv[1])
     else:
         lines = os.stdin
