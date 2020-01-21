@@ -24,12 +24,11 @@ rule copy_peaks:
 
 rule overlap_hist:
     input:
-        "domains/{reference}_domains.bed",
-        "domains/{query}_domains.bed",
+        "domains/{reference}.bed",
+        "domains/{query}.bed",
     output:
         "overlap_histogram/{reference}_{query}.bed",
         "overlap_histogram/{reference}_{query}.png",
-	
     shell:
         """
 	chiptools overlap_fraction {input} > {output[0]}
