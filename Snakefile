@@ -31,6 +31,6 @@ rule overlap_hist:
         "overlap_histogram/{reference}_{query}.png",
     shell:
         """
-	chiptools overlap_fraction {input} | awk "{{if (($3-$2)>5000) {{print $4}}}} > {output[0]}
+	chiptools overlap_fraction {input} | awk "{{if (($3-$2)>5000) {{print $4}}}}" > {output[0]}
 	python3 src/ratio_histogram.py {output}
 	"""
