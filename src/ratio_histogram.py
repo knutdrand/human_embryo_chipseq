@@ -8,9 +8,13 @@ def logit(ratio):
 
 if __name__ == "__main__":
     import sys
-    input_file = sys.argv[1]
+    import os
+    if len(sys.argv>2):
+        lines = open(sys.argv[1])
+    else:
+        lines = os.stdin
     numbers = np.array(
-        [float(c.strip()) for c in open(input_file).read().split()])
+        [float(c.strip()) for c in lines])
     plt.hist(logit(numbers), bins=150)
     plt.savefig(sys.argv[-1])
     
