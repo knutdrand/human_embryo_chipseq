@@ -4,7 +4,7 @@ rule size_hist:
     output:
         "histograms/{name}_{class}_{type}.png"
     shell:
-        "python3 peak_histograms.py {input} {output}"
+        "python3 src/peak_histograms.py {input} {output}"
 
 rule copy_domains:
     input:
