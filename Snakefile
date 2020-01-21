@@ -27,7 +27,9 @@ rule overlap_hist:
         "domains/{reference}_domains.bed",
         "domains/{query}_domains.bed",
     output:
-        "overlap_histogram/{reference}_{query}.{bed, png}"
+        "overlap_histogram/{reference}_{query}.bed",
+        "overlap_histogram/{reference}_{query}.png",
+	
     shell:
         """
 	chiptools overlap_fraction {input} > {output[0]}
