@@ -23,7 +23,7 @@ def get_sizes(lines):
 def get_kb_hist(sizes):
     n_bins = 50
     bins = np.zeros(n_bins, dtype="int")
-    size_bins = (min(s//1000, n_bins) for s in sizes) 
+    size_bins = (min(s//1000, n_bins-1) for s in sizes) 
     for sb in size_bins:
         bins[int(sb)] += 1
     plt.plot(bins)
