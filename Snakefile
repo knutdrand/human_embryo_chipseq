@@ -36,10 +36,10 @@ rule merge_peaks:
 
 rule size_hist:
     input:
-        "peaks/{name}_{class}.{type}Peak"
+        "domains/{name}.bed"
     output:
-        "histograms/{name}_{class}_{type}.png",
-        "histograms/{name}_{class}_{type}_log.png"
+        "size_histograms/{name}.png",
+        "logsize_histograms/{name}.png"
     shell:
         """
 	python3 src/peak_histograms.py hist {input} {output[0]}
