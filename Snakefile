@@ -1,13 +1,15 @@
+config: "config.json"
+
 rule peak_call_v3:
     input:
-        "sorted_alignments/{name}_K4.bed"
-        "sorted_alignments/{name}_In.bed"
+        "pooled_K4/{name}.bed.gz",
+	"pooled_inputs/{name}.bed.gz" 
     output:
         "v3/macs_output/{name}_peaks.broadPeak",
-        temp("v3/macs_output/{name}_treat_pileup.bdg"),
-	temp("v3/macs_output/{name}_control_lambda.bdg")
+        "v3/macs_output/{name}_treat_pileup.bdg",
+	"v3/macs_output/{name}_control_lambda.bdg"
     shell:
-        "macs2 -t {input[0]} -c {input[1]} --bdg -B -n {wildcards.name} --broad -o v3/peaks/"
+        "macs2 callpeak -t {input[0]} -c {input[1]} --bdg -n {wildcards.name} --broad --outdir v3/macs_output"
 
 rule create_pileup_track:
     input:
@@ -28,7 +30,7 @@ rule create_peak_track:
 
 rule merge_peaks:
     input:
-        "{version}/peaks/{name}.broadPeak"
+        "{version}/macs_output/{name}_peaks.broadPeak"
     output:
         "{version}/domains/{name}.bed"
     shell:
@@ -36,39 +38,44 @@ rule merge_peaks:
 
 rule size_hist:
     input:
-        "domains/{name}.bed"
+        "{version}/domains/{name}.bed"
     output:
-        "size_histograms/{name}.png",
-        "logsize_histograms/{name}.png"
+        "{version}/size_histograms/{name}.png",
+        "{version}/logsize_histograms/{name}.png"
     shell:
         """
 	python3 src/peak_histograms.py hist {input} {output[0]}
 	python3 src/peak_histograms.py loghist {input} {output[1]}
 	"""
 
-rule copy_domains:
+rule tss_plot:
     input:
-        "../broad_domains/results/{name}_domains.broadPeak"
+        "data/human_genes.bed",
+	"{version}/macs_output/{name}_treat_pileup.bdg"
     output:
-        "domains/{name}.bed"
+        "{version}/tss_plots/{name}.npy",
+        "{version}/tss_plots/{name}.png"
     shell:
-        "mv {input} {output}"
+        "cat {input[1]} | chiptools tssplot {input[0]} {output}"
 
-rule copy_peaks:
+rule average_plots:
     input:
-        "../broad_domains/results/{name}_peaks.broadPeak"
+        "{version}/domains/{name}.bed",
+        "{version}/macs_output/{name}_treat_pileup.bdg"
     output:
-        "peaks/{name}.bed"
+        "{version}/average_plots/{name}.npy",
+        "{version}/average_plots/{name}.png"
     shell:
-        "mv {input} {output}"
+        "cat {input[1]} | chiptools averageplot {input[0]} {output}"
+
 
 rule overlap_hist:
     input:
-        "domains/{reference}.bed",
-        "domains/{query}.bed",
+        "{version}/domains/{reference}.bed",
+        "{version}/domains/{query}.bed",
     output:
-        "overlap_histogram/{reference}_{query}.bed",
-        "overlap_histogram/{reference}_{query}.png",
+        "{version}/overlap_histogram/{reference}_{query}.bed",
+        "{version}/overlap_histogram/{reference}_{query}.png",
     shell:
         """
 	chiptools overlap_fraction {input} > {output[0]}
