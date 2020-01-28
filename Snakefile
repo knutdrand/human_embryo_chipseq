@@ -1,5 +1,3 @@
-config: "config.json"
-
 rule bwa_map:
     input:
         "reads/{name}_R1.fastq.gz",
