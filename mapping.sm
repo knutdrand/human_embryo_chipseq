@@ -34,8 +34,8 @@ rule bwa_map:
     threads: 16
     shell:
         """
-        fastqc {input[1]} -o {wildcard.species}/qc/
-        fastqc {input[2]} -o {wildcard.species}/qc/
+        fastqc {input[1]} -o {wildcards.species}/qc/
+        fastqc {input[2]} -o {wildcards.species}/qc/
         bwa mem -t {threads} {input} | samtools view -Sb - > {output}
         """
 
