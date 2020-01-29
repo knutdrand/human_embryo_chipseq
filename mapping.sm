@@ -30,7 +30,9 @@ rule bwa_map:
         "{species}/trimmed_reads/{name}_R1.fastq.gz",
         "{species}/trimmed_reads/{name}_R2.fastq.gz"
     output:
-        temp("{species}/mapped_reads/{name}.bam")
+        temp("{species}/mapped_reads/{name}.bam"),
+        "{species}/qc/{name}_R1_fastqz.html",
+        "{species}/qc/{name}_R2_fastqz.html"
     threads: 16
     shell:
         """
