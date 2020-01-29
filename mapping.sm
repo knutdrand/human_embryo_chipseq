@@ -2,11 +2,17 @@ key="../u1452@nelstor0.cbu.uib.no.key"
 
 NELS="u1452@nelstor0.cbu.uib.no:/elixir-chr/nels/users/u1452/Projects/UiO_Dahl_Chromatin_2018/Adeel_ChIP-seq/GCF-2018-541/fastq/samples/AHFHMHBGX7/"
 
+rule rat_all:
+    input:
+        expand("Rnor6/fragments/AM_{N}.bed", N=[446,447,454,455])
+
+
 rule import_rat:
     output:
         temp("Rnor6/reads/{sample}_R{read}.fastq.gz")
     shell:
         "scp -i {key} {NELS}{wildcards.sample}_L000_R{wildcards.read}.fastq.gz {output}"
+
 
 rule trim_adaptors:
     input:
