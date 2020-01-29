@@ -1,0 +1,50 @@
+key="../u1452@nelstor0.cbu.uib.no.key"
+
+NELS="u1452@nelstor0.cbu.uib.no:/elixir-chr/nels/users/u1452/Projects/UiO_Dahl_Chromatin_2018/Adeel_ChIP-seq/GCF-2018-541/fastq/samples/AHFHMHBGX7/"
+
+rule import_rat:
+    output:
+        temp("Rnor6/reads/{sample}_R{read}.fastq.gz")
+    shell:
+        "scp -i {key} {NELS}{wildcards.sample}_L000_R{wildcards.read}.fastq.gz {output}"
+
+rule trim_adaptors:
+    input:
+        "{species}/reads/{name}_R1.fastq.gz",
+        "{species}/reads/{name}_R2.fastq.gz"
+    output:
+        temp("{species}/trimmed_reads/{name}_R1.fastq.gz"),
+        temp("{species}/trimmed_reads/{name}_R2.fastq.gz")
+    shell:
+        'cutadapt -a "GATCGGAAGAGCACACGTCTGAACTCCAGTCAC" -A "AATGATACGGCGACCACCGAGATCTACAC" -o {output[0]} -p {output[1]} {input}'
+
+rule bwa_map:
+    input:
+        "../data/{species}.fa.gz",
+        "{species}/trimmed_reads/{name}_R1.fastq.gz",
+        "{species}/trimmed_reads/{name}_R2.fastq.gz"
+    output:
+        temp("{species}/mapped_reads/{name}.bam")
+    threads: 16
+    shell:
+        "bwa mem -t {threads} {input} | samtools view -Sb - > {output}"
+
+rule filter_alignments:
+    input:
+        "{species}/mapped_reads/{name}.bam"
+    output:
+        "{species}/logs/{name}.flagstat",
+        temp("{species}/filtered_alignments/{name}.bam")
+    shell:
+        """
+	samtools flagstat {input} > {output[0]}
+	samtools view -F 1804 -f 2 -u {input} > {output[1]}
+	"""
+
+rule fragment_bed:
+    input:
+        "{species}/filtered_alignments/{sample}.bam"
+    output:
+        temp("{species}/fragments/{sample}.bed")
+    shell:
+        "/usr/local/bin/macs2 randsample -i {input} -f BAMPE -p 100 -o {output}"

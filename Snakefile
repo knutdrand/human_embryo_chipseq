@@ -1,12 +1,5 @@
-rule bwa_map:
-    input:
-        "reads/{name}_R1.fastq.gz",
-        "reads/{name}_R2.fastq.gz"
-    output:
-        temp("mapped_reads/{name}.bam")
-    threads: 16
-    shell:
-        "bwa mem -t {threads} ../data/mm10.fa {input} | samtools view -Sb - > {output}"
+include: "mapping.sm"
+
 
 rule peak_call_v3:
     input:
