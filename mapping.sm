@@ -33,7 +33,11 @@ rule bwa_map:
         temp("{species}/mapped_reads/{name}.bam")
     threads: 16
     shell:
-        "bwa mem -t {threads} {input} | samtools view -Sb - > {output}"
+        """
+        fastqc {input[1]} -o {wildcard.species}/qc/
+        fastqc {input[2]} -o {wildcard.species}/qc/
+        bwa mem -t {threads} {input} | samtools view -Sb - > {output}
+        """
 
 rule filter_alignments:
     input:
@@ -51,6 +55,6 @@ rule fragment_bed:
     input:
         "{species}/filtered_alignments/{sample}.bam"
     output:
-        temp("{species}/fragments/{sample}.bed")
+        "{species}/fragments/{sample}.bed"
     shell:
         "/usr/local/bin/macs2 randsample -i {input} -f BAMPE -p 100 -o {output}"
