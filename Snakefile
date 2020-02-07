@@ -1,4 +1,5 @@
 include: "mapping.sm"
+include: "commongenes.sm"
 
 
 rule peak_call_v3:

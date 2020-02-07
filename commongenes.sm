@@ -1,0 +1,40 @@
+rule import_chain:
+    output:
+        "data/hg38.{species}.all.chain.gz"
+    shell:
+        "wget http://hgdownload.cse.ucsc.edu/goldenpath/hg38/vs{wildcards.species}/hg38.{wildcards.species}.all.chain.gz -O {output}"
+
+
+rule chain_to_bed:
+    input:
+        "data/hg38.{species}.all.chain.gz"
+    output:
+        temp("liftover_bedfiles/{species}.bed")
+    shell:
+        """zgrep ^chain {input} | awk '{{OFS="\t"}}{{print $3, $6, $7}}' > {output}"""
+
+
+rule sort_chain_bed:
+    input:
+        "liftover_bedfiles/{species}.bed"
+    output:
+        temp("sorted_liftover/{species}.bed")
+    shell:
+        "sort -k1,1 -k2,2n {input} > {output}"
+
+rule merge_chain_bed:
+    input:
+        "sorted_liftover/{species}.bed"
+    output:
+        "merged_liftover/{species}.bed"
+    shell:
+        "bedtools merge -i {input} > {output}"
+
+rule get_unique_genes:
+    input:
+        "data/human_genes.bed",
+        "merged_liftover/{species}.bed"
+    output:
+        "unique_genes/{species}.bed"
+    shell:
+        """bedtools coverage -a {input[0]} -b {input[1]} | awk '{{if($NF<0.1){{print}}}}' | grep -P "^chr\d*\s" | cut -f 1-4 > {output}"""
