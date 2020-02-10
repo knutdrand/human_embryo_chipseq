@@ -1,7 +1,7 @@
 include: "mapping.sm"
 include: "commongenes.sm"
 
-names = ["M", "GV", "IVF", "ICSI"] # "Day3G", "Day2G", "Zygote", 
+names = ["M", "GV", "IVF", "ICSI", "Day3G", "Day2G", "Zygote", "BlastG"]
 track_hub = "../../var/www/html/trackhub_knut/"
 track_types = ["domains.bb", "peaks.bb", "treat_pileup.bw", "control_lambda.bw", "qvalues.bw"]
 
