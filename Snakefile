@@ -1,6 +1,10 @@
 include: "mapping.sm"
 include: "commongenes.sm"
 
+rule human:
+    input:
+        expand("hg38/v3/domains/{name}.bed", name=["M", "Day3G"])
+
 rule copy_human_fragments:
     input:
         "../broad_domains/data/{name}_pool.bed.gz",
@@ -25,21 +29,21 @@ rule peak_call_v3:
     shell:
         "macs2 callpeak -t {input[0]} -c {input[1]} --bdg -n {wildcards.name} --broad --outdir v3/macs_output"
 
-rule create_pileup_track:
+rule create_bw_track:
     input:
-        "{species}/{version}/macs_output/{name}_treat_pileup.bdg",
-        "{species}.chrom.sizes"
+        "{species}/{version}/macs_output/{name}.bdg",
+        "data/{species}.chrom.sizes"
     output:
-        "{species}/{version}/macs_output/{name}_treat_pileup.bw"
+        "{species}/{version}/macs_output/{name}.bw"
     shell:
         "./bdg2bw {input}"
 
 rule create_peak_track:
     input:
         "{species}/{version}/macs_output/{name}_peaks.narrowPeak",
-        "{species}.chrom.sizes"
+        "data/{species}.chrom.sizes"
     output:
-        "{species}/{version}/macs_output/{name_peaks.bb}"
+        "{species}/{version}/macs_output/{name}_peaks.bb"
     shell:
         "./narrowPeak2bb.sh {input}"
 
