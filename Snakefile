@@ -1,10 +1,14 @@
 include: "mapping.sm"
 include: "commongenes.sm"
 
+names = ["M", "Day3G"]
+
 rule human:
     input:
-        expand("hg38/v3/domains/{name}.bed", name=["M", "Day3G"])
-
+        expand("hg38/v3/domains/{name}.bed", name=names),
+        expand("hg38/v3/average_plots/{name}.png", name=names),
+        expand("hg38/v3/tss_plots/{name}.png", name=names)
+        
 rule copy_human_fragments:
     input:
         "../broad_domains/data/{name}_pool.bed.gz",
@@ -27,7 +31,7 @@ rule peak_call_v3:
         "{species}/v3/macs_output/{name}_treat_pileup.bdg",
 	"{species}/v3/macs_output/{name}_control_lambda.bdg"
     shell:
-        "macs2 callpeak -t {input[0]} -c {input[1]} --bdg -n {wildcards.name} --broad --outdir v3/macs_output"
+        "macs2 callpeak -t {input[0]} -c {input[1]} --bdg -n {wildcards.name} --broad --outdir {wildcards.species}/v3/macs_output/"
 
 rule create_bw_track:
     input:
