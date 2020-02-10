@@ -2,7 +2,7 @@ include: "mapping.sm"
 include: "commongenes.sm"
 
 names = ["M", "Day3G", "Day2G", "Zygote", "Ooc2", "GV", "IVF", "ICSI"]
-track_hub = "../../var/www/html/trackhub_knut/mm10/"
+track_hub = "../../var/www/html/trackhub_knut/"
 track_types = ["domains.bb", "peaks.bb", "treat_pileup.bw", "control_lambda.bw", "qvalues.bw"]
 
 rule human:
@@ -13,7 +13,7 @@ rule human:
 
 rule trackhub:
     input:
-        expand(track_hub+"{name}_{track_type}", name=names, track_type=track_types)
+        expand(track_hub+"hg38/{name}_{track_type}", name=names, track_type=track_types)
     output:
         track_hub + "trackDb.txt"
     shell:
