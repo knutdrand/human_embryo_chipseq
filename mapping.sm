@@ -21,8 +21,9 @@ rule trim_adaptors:
     output:
         temp("{species}/trimmed_reads/{name}_R1.fastq.gz"),
         temp("{species}/trimmed_reads/{name}_R2.fastq.gz")
+    threads: 16
     shell:
-        'cutadapt -a "GATCGGAAGAGCACACGTCTGAACTCCAGTCAC" -A "AATGATACGGCGACCACCGAGATCTACAC" -o {output[0]} -p {output[1]} {input}'
+        'cutadapt --nextseq-trim=20 -m 10 -j {threads} -a "GATCGGAAGAGCACACGTCTGAACTCCAGTCAC" -A "AATGATACGGCGACCACCGAGATCTACAC" -o {output[0]} -p {output[1]} {input}'
 
 rule bwa_map:
     input:
@@ -38,7 +39,7 @@ rule bwa_map:
         """
         fastqc {input[1]} -o {wildcards.species}/qc/
         fastqc {input[2]} -o {wildcards.species}/qc/
-        bwa mem -t {threads} {input} | samtools view -Sb - > {output}
+        bwa mem -t {threads} {input} | samtools view -Sb - > {output[0]}
         """
 
 rule filter_alignments:
@@ -50,7 +51,7 @@ rule filter_alignments:
     shell:
         """
 	samtools flagstat {input} > {output[0]}
-	samtools view -F 1804 -f 2 -u {input} > {output[1]}
+	samtools view -F 1804 -f 2 -q 30 -u  {input} > {output[1]}
 	"""
 
 rule fragment_bed:
