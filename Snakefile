@@ -1,6 +1,18 @@
 include: "mapping.sm"
 include: "commongenes.sm"
 
+rule copy_human_fragments:
+    input:
+        "../broad_domains/data/{name}_pool.bed.gz",
+        "../broad_domains/data/{name}_In.bed.gz",        
+    output:
+        "hg38/pooled_K4/{name}.bed.gz",
+        "hg38/pooled_inputs/{name}.bed.gz"
+    shell:
+        """
+        mv {input[0]} {output[0]}
+        mv {input[1]} {output[1]}
+        """
 
 rule peak_call_v3:
     input:
@@ -21,7 +33,6 @@ rule create_pileup_track:
         "{species}/{version}/macs_output/{name}_treat_pileup.bw"
     shell:
         "./bdg2bw {input}"
-
 
 rule create_peak_track:
     input:
