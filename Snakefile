@@ -78,15 +78,18 @@ rule create_subhub:
         "{species}/{version}/macs_output/{name}_control_lambda.bw",
         "{species}/{version}/macs_output/{name}_qvalues.bw"
     output:
-        track_hub + "{species}/{name}_domains.bb",
-        track_hub + "{species}/{name}_peaks.bb",
-        track_hub + "{species}/{name}_treat_pileup.bw",
-        track_hub + "{species}/{name}_control_lambda.bw",
-        track_hub + "{species}/{name}_qvalues.bw",
+        track_hub + "{species}/{version}_{name}_domains.bb",
+        track_hub + "{species}/{version}_{name}_peaks.bb",
+        track_hub + "{species}/{version}_{name}_treat_pileup.bw",
+        track_hub + "{species}/{version}_{name}_control_lambda.bw",
+        track_hub + "{species}/{version}_{name}_qvalues.bw",
     shell:
         """
-        mv -t {track_hub} {input}
-        mv {track_hub}/{wildcards.name}.bb {track_hub}/{wildcards.name}_domains.bb
+        mv {input[0]} {output[0]}
+        mv {input[1]} {output[1]}
+        mv {input[2]} {output[2]}
+        mv {input[3]} {output[3]}
+        mv {input[4]} {output[4]}
         """
 
 rule merge_peaks:
