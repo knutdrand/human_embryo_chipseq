@@ -48,9 +48,9 @@ rule get_qvalues:
         "{species}/{version}/macs_output/{name}_treat_pileup.bdg",
 	"{species}/{version}/macs_output/{name}_control_lambda.bdg"
     output:
-	"{species}/{version}/macs_output/{name}_qvalues.bdg"        
+        "{species}/{version}/macs_output/{name}_qvalues.bdg"
     shell:
-        "macs2 bdgcamp -t {input[0]} -c {input[1]} -m qpois -o {output}"
+        "macs2 bdgcmp -t {input[0]} -c {input[1]} -m qpois -o {output}"
 
 rule create_bw_track:
     input:
