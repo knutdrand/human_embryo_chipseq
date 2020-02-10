@@ -13,7 +13,7 @@ rule human:
 
 rule trackhub:
     input:
-        expand(track_hub+"hg38/{name}_{track_type}", name=names, track_type=track_types)
+        expand(track_hub+"hg38/v3_{name}_{track_type}", name=names, track_type=track_types)
     output:
         track_hub + "hg38/trackDb.txt"
     shell:
