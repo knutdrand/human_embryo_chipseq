@@ -1,7 +1,7 @@
 include: "mapping.sm"
 include: "commongenes.sm"
 
-names = ["M", "Day3G", "Day2G", "Zygote", "Ooc2", "GV", "IVF", "ICSI"]
+names = ["M", "GV", "IVF", "ICSI"] # "Day3G", "Day2G", "Zygote", 
 track_hub = "../../var/www/html/trackhub_knut/"
 track_types = ["domains.bb", "peaks.bb", "treat_pileup.bw", "control_lambda.bw", "qvalues.bw"]
 
@@ -127,7 +127,7 @@ rule tss_plot:
 	"{species}/{version}/macs_output/{name}_treat_pileup.bdg"
     output:
         "{species}/{version}/tss_plots/{name}.npy",
-        "{species}/{version}/tss_plots/{name}.png"
+        report("{species}/{version}/tss_plots/{name}.png", caption="TSS enrichment-plot for {name}")
     shell:
         "cat {input[1]} | chiptools tssplot {input[0]} {output}"
 
