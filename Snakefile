@@ -11,6 +11,22 @@ rule human:
         expand("hg38/v3/average_plots/{name}.png", name=names),
         expand("hg38/v3/tss_plots/{name}.png", name=names)
 
+rule combine_tss_plot:
+    input:
+        expand("hg38/v3/tss_plots/{name}.npy", name=names),
+    output:
+        "hg38/v3/tss_plot.png",
+    shell:
+        "chiptools plot {input} {output}"
+
+rule combine_average_plot:
+    input:
+        expand("hg38/v3/average_plots/{name}.npy", name=names),
+    output:
+        "hg38/v3/average_plot.png",
+    shell:
+        "chiptools plot {input} {output}"
+
 rule trackhub:
     input:
         expand(track_hub+"hg38/v3_{name}_{track_type}", name=names, track_type=track_types)
@@ -121,10 +137,10 @@ rule size_hist:
 	python3 src/peak_histograms.py loghist {input} {output[1]}
 	"""
 
-rule tss_plot:
+rule tss_plots:
     input:
         "data/{species}_genes.bed",
-	"{species}/{version}/macs_output/{name}_treat_pileup.bdg"
+	"{species}/{version}/macs_output/{name}_qvalues.bdg"
     output:
         "{species}/{version}/tss_plots/{name}.npy",
         report("{species}/{version}/tss_plots/{name}.png", caption="TSS enrichment-plot for {name}")
@@ -134,7 +150,7 @@ rule tss_plot:
 rule average_plots:
     input:
         "{species}/{version}/domains/{name}.bed",
-        "{species}/{version}/macs_output/{name}_treat_pileup.bdg"
+        "{species}/{version}/macs_output/{name}_qvalues.bdg"
     output:
         "{species}/{version}/average_plots/{name}.npy",
         "{species}/{version}/average_plots/{name}.png"
