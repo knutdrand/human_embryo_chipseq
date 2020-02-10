@@ -1,13 +1,23 @@
 include: "mapping.sm"
 include: "commongenes.sm"
 
-names = ["M", "Day3G"]
+names = ["M", "Day3G", "Day2G", "Zygote", "Ooc2", "GV", "IVF", "ICSI"]
+track_hub = "../../var/www/html/trackhub_knut/mm10/"
+track_types = ["domains.bb", "peaks.bb", "treat_pileup.bw", "control_lambda.bw", "qvalues.bw"]
 
 rule human:
     input:
         expand("hg38/v3/domains/{name}.bed", name=names),
         expand("hg38/v3/average_plots/{name}.png", name=names),
         expand("hg38/v3/tss_plots/{name}.png", name=names)
+
+rule trackhub:
+    input:
+        expand(track_hub+"{name}_{track_type}", name=names, track_type=track_types)
+    output:
+        track_hub + "trackDb.txt"
+    shell:
+        "chiptools trackdb " + " ".join(names) + "> {output}"
         
 rule copy_human_fragments:
     input:
@@ -44,12 +54,40 @@ rule create_bw_track:
 
 rule create_peak_track:
     input:
-        "{species}/{version}/macs_output/{name}_peaks.narrowPeak",
+        "{species}/{version}/macs_output/{name}_peaks.broadPeak",
         "data/{species}.chrom.sizes"
     output:
         "{species}/{version}/macs_output/{name}_peaks.bb"
     shell:
-        "./narrowPeak2bb.sh {input}"
+        "./broadPeak2bb.sh {input}"
+
+rule create_domain_track:
+    input:
+        "{species}/{version}/domains/{name}.bed",
+        "data/{species}.chrom.sizes"
+    output:
+        "{species}/{version}/macs_output/{name}.bb"
+    shell:
+        "./domains2bb.sh {input}"
+
+rule create_subhub:
+    input:
+        "{species}/{version}/domains/{name}.bb",
+        "{species}/{version}/macs_output/{name}_peaks.bb",
+        "{species}/{version}/macs_output/{name}_treat_pileup.bw",
+        "{species}/{version}/macs_output/{name}_control_lambda.bw",
+        "{species}/{version}/macs_output/{name}_qvalues.bw"
+    output:
+        track_hub + "{name}_domains.bb",
+        track_hub + "{name}_peaks.bb",
+        track_hub + "{name}_treat_pileup.bw",
+        track_hub + "{name}_control_lambda.bw",
+        track_hub + "{name}_qvalues.bw",
+    shell:
+        """
+        mv -t {track_hub} {input}
+        mv {track_hub}/{wildcards.name}.bb {track_hub}/{wildcards.name}_domains.bb
+        """
 
 rule merge_peaks:
     input:
