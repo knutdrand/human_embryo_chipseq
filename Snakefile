@@ -75,7 +75,7 @@ rule create_domain_track:
         "{species}/{version}/domains/{name}.bed",
         "data/{species}.chrom.sizes"
     output:
-        "{species}/{version}/macs_output/{name}.bb"
+        "{species}/{version}/domains/{name}.bb"
     shell:
         "./domains2bb.sh {input}"
 
