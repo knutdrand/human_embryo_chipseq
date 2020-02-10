@@ -15,7 +15,7 @@ rule trackhub:
     input:
         expand(track_hub+"hg38/{name}_{track_type}", name=names, track_type=track_types)
     output:
-        track_hub + "trackDb.txt"
+        track_hub + "hg38/trackDb.txt"
     shell:
         "chiptools trackdb " + " ".join(names) + "> {output}"
         
