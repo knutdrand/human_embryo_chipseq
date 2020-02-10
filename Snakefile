@@ -43,6 +43,15 @@ rule peak_call_v3:
     shell:
         "macs2 callpeak -t {input[0]} -c {input[1]} --bdg -n {wildcards.name} --broad --outdir {wildcards.species}/v3/macs_output/"
 
+rule get_qvalues:
+    input:
+        "{species}/{version}/macs_output/{name}_treat_pileup.bdg",
+	"{species}/{version}/macs_output/{name}_control_lambda.bdg"
+    output:
+	"{species}/{version}/macs_output/{name}_qvalues.bdg"        
+    shell:
+        "macs2 bdgcamp -t {input[0]} -c {input[1]} -m qpois -o {output}"
+
 rule create_bw_track:
     input:
         "{species}/{version}/macs_output/{name}.bdg",
