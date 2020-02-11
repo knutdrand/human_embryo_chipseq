@@ -158,7 +158,7 @@ rule gate_domains:
         """
         awk '{{if (($3-$2)<5000) print}}' {input} > {output[0]}
         awk '{{if (5000<=($3-$2) && ($3-$2)<20000) print}}' {input} > {output[1]}
-        awk '{{20000<=($3-$2)) print}}' {input} > {output[2]}
+        awk '{{if (20000<=($3-$2)) print}}' {input} > {output[2]}
         """
 
 rule average_plots:
