@@ -155,9 +155,11 @@ rule gate_domains:
         "{species}/{version}/gated_domains/{name}_5to20k.bed",
         "{species}/{version}/gated_domains/{name}_super20k.bed",
     shell:
-        "awk '{{if (($3-$2)<5000) print}}' {input} > {output[0]}"
-        "awk '{{if (5000<=($3-$2) && ($3-$2)<20000) print}}' > {output[1]}"
-        "awk '{{20000<=($3-$2)) print}}' > {output[2]}"
+        """
+        awk '{{if (($3-$2)<5000) print}}' {input} > {output[0]}
+        awk '{{if (5000<=($3-$2) && ($3-$2)<20000) print}}' > {output[1]}
+        awk '{{20000<=($3-$2)) print}}' > {output[2]}
+        """
 
 rule average_plots:
     input:
