@@ -21,9 +21,9 @@ rule combine_tss_plot:
 
 rule combine_average_plot:
     input:
-        expand("hg38/v3/average_plots/{name}.npy", name=names),
+        expand("hg38/v3/average_plots/{name}_{{size}}.npy", name=names),
     output:
-        "hg38/v3/average_plot.png",
+        "hg38/v3/average_plot_{size}.png",
     shell:
         "chiptools plot {input} {output}"
 
@@ -147,16 +147,27 @@ rule tss_plots:
     shell:
         "cat {input[1]} | chiptools tssplot {input[0]} {output}"
 
+rule gate_domains:
+    input:
+        "{species}/{version}/domains/{name}.bed"
+    output:
+        "{species}/{version}/gated_domains/{name}_sub5k.bed",
+        "{species}/{version}/gated_domains/{name}_5to20k.bed",
+        "{species}/{version}/gated_domains/{name}_super20k.bed",
+    shell:
+        "awk '{{if (($3-$2)<5000) print}}' {input} > {output[0]}"
+        "awk '{{if (5000<=($3-$2) && ($3-$2)<20000) print}}' > {output[1]}"
+        "awk '{{20000<=($3-$2)) print}}' > {output[2]}"
+
 rule average_plots:
     input:
-        "{species}/{version}/domains/{name}.bed",
+        "{species}/{version}/gated_domains/{name}_{size}.bed",
         "{species}/{version}/macs_output/{name}_qvalues.bdg"
     output:
-        "{species}/{version}/average_plots/{name}.npy",
-        "{species}/{version}/average_plots/{name}.png"
+        "{species}/{version}/average_plots/{name}_{size}.npy",
+        "{species}/{version}/average_plots/{name}_{size}.png"
     shell:
         "cat {input[1]} | chiptools averageplot {input[0]} {output}"
-
 
 rule overlap_hist:
     input:
