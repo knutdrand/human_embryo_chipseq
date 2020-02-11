@@ -156,8 +156,8 @@ rule gate_domains:
         "{species}/{version}/gated_domains/{name}_super20k.bed",
     shell:
         """
-        awk '{{if (($3-$2)<5000) print}}' {input} > {output[0]}
-        awk '{{if (5000<=($3-$2) && ($3-$2)<20000) print}}' > {output[1]}
+        awk '{{if (($3-$2)<5000) print}}' {input[0]} > {output[0]}
+        awk '{{if (5000<=($3-$2) && ($3-$2)<20000) print}}' {input[1]} > {output[1]}
         awk '{{20000<=($3-$2)) print}}' > {output[2]}
         """
 
