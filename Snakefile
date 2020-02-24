@@ -1,5 +1,6 @@
 include: "mapping.sm"
 include: "commongenes.sm"
+include: "gc.sm"
 
 names = ["M", "GV", "IVF", "ICSI", "Day3G", "Day2G", "Zygote", "BlastG"]
 track_hub = "../../var/www/html/knut/human_embryo_chipseq/trackhub/"
@@ -33,7 +34,7 @@ rule trackhub:
     output:
         track_hub + "hg38/trackDb.txt"
     shell:
-        chiptools trackdb " + " ".join("v3_"+n for n in names) + "> {output}
+        'chiptools trackdb ' + ' '.join("v3_"+n for n in names) + '> {output}'
         
 rule copy_human_fragments:
     input:
