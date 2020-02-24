@@ -33,7 +33,7 @@ rule trackhub:
     output:
         track_hub + "hg38/trackDb.txt"
     shell:
-        "chiptools trackdb " + " ".join("v3_"+n for n in names) + "> {output}"
+        chiptools trackdb " + " ".join("v3_"+n for n in names) + "> {output}
         
 rule copy_human_fragments:
     input:
