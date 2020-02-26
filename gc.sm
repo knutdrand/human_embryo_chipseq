@@ -1,3 +1,6 @@
+names = ["M", "GV", "IVF", "ICSI", "Day3G", "Day2G", "Zygote", "BlastG", "Ooc2", "preZGA"]
+regiontypes = ["domains_minus_tss500", "non_tss_containing_domains", "domain_flanks",
+                           "tss_containing_domains"]
 rule get_tss:
     input:
         "data/{species}_genes.bed"
@@ -22,7 +25,7 @@ rule get_domain_flanks:
     output:
         "{species}/{version}/regions/domain_flanks/{name}.bed"
     shell:
-        "bedtools flank -i {input[0]} -g {input[1]}  -b 5000 > {output}"
+        "bedtools flank -i {input[0]} -g {input[1]}  -b 5000 | awk '{{if ($3>$2) print}}'  > {output}"
 
 rule get_tss_containing_domains:
     input:
@@ -58,14 +61,26 @@ rule get_gc:
     output:
         "{species}/{version}/regions/{folder}/gc/{name}.txt"
     shell:
-        "bedtools nuc -fi {input[0]} -bed {input[1]} | awk '{{gc+=$(NF-3)+$(NF-4);t+=$NF}}END{{print gc/t}}' > {output}"
+        "bedtools nuc -fi {input[0]} -bed {input[1]} | grep -v chrM | awk '{{gc+=$(NF-4)+$(NF-5);t+=$NF}}END{{print gc/t}}' > {output}"
 
 rule summarize_gc:
     input:
         expand("{{species}}/{{version}}/regions/{regiontype}/gc/{{name}}.txt",
-               regiontype=["domains_minus_tss500", "non_tss_containing_domains", "domain_flanks",
-                           "tss_containing_domains"])
+               regiontype=regiontypes
+               )
     output:
         "{species}/{version}/gc_content/{name}.txt"
     shell:
-        "paste {input} > {output}"
+        'paste {input} <(echo "{wildcards.name}") > {output}'
+
+rule all_gc:
+    input:
+        expand("{{species}}/{{version}}/gc_content/{name}.txt",
+               name=names)
+    output:
+        "{species}/{version}/gc_content/ALL.tsv"
+    shell:
+        """
+        echo "domains_minus_tss500\tnon_tss_containing_domains\tdomain_flanks\ttss_containing_domains\tname" > {output}
+        cat {input} >> {output}
+        """

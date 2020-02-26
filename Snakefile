@@ -1,6 +1,7 @@
 include: "mapping.sm"
 include: "commongenes.sm"
 include: "gc.sm"
+configfile: "config.json"
 
 names = ["M", "GV", "IVF", "ICSI", "Day3G", "Day2G", "Zygote", "BlastG"]
 track_hub = "../../var/www/html/knut/human_embryo_chipseq/trackhub/"
@@ -11,6 +12,14 @@ rule human:
         expand("hg38/v3/domains/{name}.bed", name=names),
         expand("hg38/v3/average_plots/{name}.png", name=names),
         expand("hg38/v3/tss_plots/{name}.png", name=names)
+
+rule pool_stages:
+    input:
+        lambda wildcards: expand("hg38/pooled_K4/{name}.bed.gz", name=config["stage_pools"][wildcards.pool_name])
+    output:
+        "hg38/pooled_K4/{pool_name}.bed.gz"
+    shell:
+        "zcat {input} | gzip > {output}"
 
 rule combine_tss_plot:
     input:
@@ -36,18 +45,18 @@ rule trackhub:
     shell:
         'chiptools trackdb ' + ' '.join("v3_"+n for n in names) + '> {output}'
         
-rule copy_human_fragments:
-    input:
-        "../broad_domains/data/{name}_pool.bed.gz",
-        "../broad_domains/data/{name}_In.bed.gz",        
-    output:
-        "hg38/pooled_K4/{name}.bed.gz",
-        "hg38/pooled_inputs/{name}.bed.gz"
-    shell:
-        """
-        mv {input[0]} {output[0]}
-        mv {input[1]} {output[1]}
-        """
+# rule copy_human_fragments:
+#     input:
+#         "../broad_domains/data/{name}_pool.bed.gz",
+#         "../broad_domains/data/{name}_In.bed.gz",
+#     output:
+#         "hg38/pooled_K4/{name}.bed.gz",
+#         "hg38/pooled_inputs/{name}.bed.gz"
+#     shell:
+#         """
+#         mv {input[0]} {output[0]}
+#         mv {input[1]} {output[1]}
+#         """
 
 rule peak_call_v3:
     input:
@@ -184,3 +193,5 @@ rule overlap_hist:
 	chiptools overlap_fraction {input} > {output[0]}
 	awk '{{if (($3-$2)>5000) {{print $4}}}}' {output[0]} | python3 src/ratio_histogram.py {output[1]}
 	"""
+
+
