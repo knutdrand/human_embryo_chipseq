@@ -6,7 +6,7 @@ rule download_refernece:
     output:
         "../../Data/{species}/{species}.fa.gz"
     shell:
-        "wget http //hgdownload.soe.ucsc.edu/goldenpath/{wildcards.species}/bigzips/{wildcard.species}.fa.gz -O {output}"
+        "wget http //hgdownload.soe.ucsc.edu/goldenpath/{wildcards.species}/bigzips/{wildcards.species}.fa.gz -O {output}"
 
 rule rat_all:
     input:
