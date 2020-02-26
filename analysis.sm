@@ -1,0 +1,87 @@
+rule download_genes:
+    output:
+        temp("{species}/data/refGene.txt.gz")
+    shell:
+        "wget https://hgdownload.soe.ucsc.edu/goldenPath/{wildcards.species}/database/refGene.txt.gz -O {output}"
+
+rule download_chrom_sizes:
+    output:
+        temp("{species}/data/chromInfo.txt.gz")
+    shell:
+        "wget https://hgdownload.soe.ucsc.edu/goldenPath/{wildcards.species}/database/chromInfo.txt.gz -O {output}"
+
+rule clean_chrom_sizes:
+    input:
+        "{species}/data/chromInfo.txt.gz"
+    output:
+        "{species}/data/chrom.sizes.txt"
+    shell:
+        "zgrep -P 'chr[\d+,X, Y, M]' {input} > {output}"
+
+rule get_genes_bed:
+    input:
+        "{species}/data/refGene.txt.gz"
+    output:
+        "{species}/data/genes.bed"
+    shell:
+        """zcat {input} | awk '{{OFS="\t"}}{{print $3, $5, $6, ".", ".", $4}}' > {output}"""
+
+rule tss_plots:
+    input:
+        "{species}/data/genes.bed",
+	"{species}/{version}/macs_output/{name}_qvalues.bdg"
+    output:
+        "{species}/{version}/tss_plots/{name}.npy",
+        report("{species}/{version}/tss_plots/{name}.png", caption="TSS enrichment-plot for {name}")
+    shell:
+        "cat {input[1]} | chiptools tssplot {input[0]} {output}"
+
+rule gate_domains:
+    input:
+        "{species}/{version}/domains/{name}.bed"
+    output:
+        "{species}/{version}/gated_domains/{name}_sub5k.bed",
+        "{species}/{version}/gated_domains/{name}_5to20k.bed",
+        "{species}/{version}/gated_domains/{name}_super20k.bed",
+    shell:
+        """
+        awk '{{if (($3-$2)<5000) print}}' {input} > {output[0]}
+        awk '{{if (5000<=($3-$2) && ($3-$2)<20000) print}}' {input} > {output[1]}
+        awk '{{if (20000<=($3-$2)) print}}' {input} > {output[2]}
+        """
+
+rule average_plots:
+    input:
+        "{species}/{version}/gated_domains/{name}_{size}.bed",
+        "{species}/{version}/macs_output/{name}_qvalues.bdg"
+    output:
+        "{species}/{version}/average_plots/{name}_{size}.npy",
+        "{species}/{version}/average_plots/{name}_{size}.png"
+    shell:
+        "cat {input[1]} | chiptools averageplot {input[0]} {output}"
+
+rule overlap_hist:
+    input:
+        "{species}/{version}/domains/{reference}.bed",
+        "{species}/{version}/domains/{query}.bed",
+    output:
+        "{species}/{version}/overlap_histogram/{reference}_{query}.bed",
+        "{species}/{version}/overlap_histogram/{reference}_{query}.png",
+    shell:
+        """
+	chiptools overlap_fraction {input} > {output[0]}
+	awk '{{if (($3-$2)>5000) {{print $4}}}}' {output[0]} | python3 src/ratio_histogram.py {output[1]}
+	"""
+
+rule get_domain_coverage:
+    input:
+        "{species}/{version}/domains/{name}.bed",
+        "{species}/data/chrom.sizes.txt"
+    output:
+        "{species}/{version}/domain_coverage/{name}.txt"
+    shell:
+        """
+        awk '{{t+=($3-$2)}}END{{print t}}' {input[0]} > {output}
+        awk '{{t+=$2}}END{{print t}}' {input[1]} >> {output}
+        """
+        
