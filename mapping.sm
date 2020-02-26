@@ -4,9 +4,9 @@ NELS="u1452@nelstor0.cbu.uib.no:/elixir-chr/nels/users/u1452/Projects/UiO_Dahl_C
 
 rule download_refernece:
     output:
-        "../Data/{species}/{species}.fa.gz"
+        "../../Data/{species}/{species}.fa.gz"
     shell:
-        "wget http //hgdownload.soe.ucsc.edu/goldenpath/{species}/bigzips/{species}.fa.gz -O {output}"
+        "wget http //hgdownload.soe.ucsc.edu/goldenpath/{wildcards.species}/bigzips/{wildcard.species}.fa.gz -O {output}"
 
 rule rat_all:
     input:
