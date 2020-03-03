@@ -3,16 +3,16 @@ regiontypes = ["domains_minus_tss500", "non_tss_containing_domains", "domain_fla
                            "tss_containing_domains"]
 rule get_tss:
     input:
-        "data/{species}_genes.bed"
+        "{species}/data/genes.bed"
     output:
         "{species}/regions/tss/1.bed"
     shell:
-        """awk '{{OFS="\t"}}{{if ($6=="+") {{print $1,$2,$2+1}} else {{print $1, $3-1, $3}}}}' {input} > {output}"""
+        """awk '{{OFS="\t"}}{{if ($6=="+") {{print $1,$2,$2+1}} else {{print $1, $3-1, $3}}}}' {input} | uniq > {output}"""
 
 rule get_tss_500:
     input:
         "{species}/regions/tss/1.bed",
-        "data/{species}.chrom.sizes"
+        "{species}/data/chrom.sizes.txt"
     output:
         "{species}/regions/tss/500.bed"
     shell:
@@ -21,7 +21,7 @@ rule get_tss_500:
 rule get_domain_flanks:
     input:
         "{species}/{version}/domains/{name}.bed",
-        "data/{species}.chrom.sizes"
+        "{species}/data/chrom.sizes.txt"
     output:
         "{species}/{version}/regions/domain_flanks/{name}.bed"
     shell:
@@ -56,7 +56,7 @@ rule get_tss_containing_domains_minus_tss500:
 
 rule get_gc:
     input:
-        "../../Data/{species}.clean.fna",
+        "../../Data/{species}/{species}.fa",
         "{species}/{version}/regions/{folder}/{name}.bed"
     output:
         "{species}/{version}/regions/{folder}/gc/{name}.txt"
@@ -75,10 +75,10 @@ rule summarize_gc:
 
 rule all_gc:
     input:
-        expand("{{species}}/{{version}}/gc_content/{name}.txt",
-               name=names)
+        expand("hg38/v3/gc_content/{name}.txt",
+               name=pools)
     output:
-        "{species}/{version}/gc_content/ALL.tsv"
+        "hg38/v3/gc_content/ALL.tsv"
     shell:
         """
         echo "domains_minus_tss500\tnon_tss_containing_domains\tdomain_flanks\ttss_containing_domains\tname" > {output}

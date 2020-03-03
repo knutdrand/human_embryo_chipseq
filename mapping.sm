@@ -2,20 +2,30 @@ key="../u1452@nelstor0.cbu.uib.no.key"
 
 NELS="u1452@nelstor0.cbu.uib.no:/elixir-chr/nels/users/u1452/Projects/UiO_Dahl_Chromatin_2018/Adeel_ChIP-seq/GCF-2018-541/fastq/samples/AHFHMHBGX7/"
 
-rule download_refernece:
+bwa_extensions = ["amb", "ann", "bwt", "pac", "sa"]
+
+rule download_reference:
     output:
         "../../Data/{species}/{species}.fa.gz"
     shell:
         "wget http://hgdownload.soe.ucsc.edu/goldenPath/{wildcards.species}/bigZips/{wildcards.species}.fa.gz -O {output}"
 
+rule bwa_index:
+    input:
+        "{path}.fa.gz",
+    output:
+        multiext("{path}.fa.gz", *("."+e for e in bwa_extensions))
+    shell:
+        "bwa index {input}"
+
+
 rule rat_all:
     input:
-        expand("Rnor6/fragments/AM_{N}.bed", N=[446,447,454,455])
-
+        expand("rn6/fragments/AM_{N}.bed", N=[446,447,454,455])
 
 rule import_rat:
     output:
-        temp("Rnor6/reads/{sample}_R{read}.fastq.gz")
+        "rn6/reads/{sample}_R{read}.fastq.gz"
     shell:
         "scp -i {key} {NELS}{wildcards.sample}_L000_R{wildcards.read}.fastq.gz {output}"
 
@@ -33,18 +43,14 @@ rule trim_adaptors:
 
 rule bwa_map:
     input:
-        "../data/{species}.fa.gz",
+        "../../Data/{species}/{species}.fa.gz",
         "{species}/trimmed_reads/{name}_R1.fastq.gz",
         "{species}/trimmed_reads/{name}_R2.fastq.gz"
     output:
-        temp("{species}/mapped_reads/{name}.bam"),
-        "{species}/qc/{name}_R1_fastqz.html",
-        "{species}/qc/{name}_R2_fastqz.html"
+        "{species}/mapped_reads/{name}.bam",
     threads: 16
     shell:
         """
-        fastqc {input[1]} -o {wildcards.species}/qc/
-        fastqc {input[2]} -o {wildcards.species}/qc/
         bwa mem -t {threads} {input} | samtools view -Sb - > {output[0]}
         """
 
@@ -66,4 +72,4 @@ rule fragment_bed:
     output:
         "{species}/fragments/{sample}.bed"
     shell:
-        "/usr/local/bin/macs2 randsample -i {input} -f BAMPE -p 100 -o {output}"
+        "macs2 randsample -i {input} -f BAMPE -p 100 -o {output}"

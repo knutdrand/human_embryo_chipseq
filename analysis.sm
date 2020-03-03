@@ -32,9 +32,41 @@ rule tss_plots:
 	"{species}/{version}/macs_output/{name}_qvalues.bdg"
     output:
         "{species}/{version}/tss_plots/{name}.npy",
-        report("{species}/{version}/tss_plots/{name}.png", caption="TSS enrichment-plot for {name}")
+        "{species}/{version}/tss_plots/{name}.png"
     shell:
         "cat {input[1]} | chiptools tssplot {input[0]} {output}"
+
+rule combine_tss_plot:
+    input:
+        expand("hg38/v3/tss_plots/{name}.npy", name=pools),
+    output:
+        report("hg38/v3/tss_plot.png", category="Signal plots"),
+    shell:
+        "chiptools plot {input} {output}"
+
+rule combine_tss_plot_species:
+    input:
+        expand("{species}/{{version}}/tss_plots/M.npy", species=species),
+    output:
+        report("{version}/tss_plot.png", category="Signal plots"),
+    shell:
+        "chiptools plot {input} {output}"
+
+rule combine_average_plot_species:
+    input:
+        expand("{species}/{{version}}/average_plots/M_{{size}}.npy", species=species),
+    output:
+        report("{version}/average_plot_{size}.png", category="Signal plots"),
+    shell:
+        "chiptools plot {input} {output}"
+
+rule combine_average_plot:
+    input:
+        expand("{{species}}/{{version}}/average_plots/{name}_{{size}}.npy", name=pools),
+    output:
+        report("{species}/{version}/average_plot_{size}.png", category="Signal plots"),
+    shell:
+        "chiptools plot {input} {output}"
 
 rule gate_domains:
     input:
@@ -85,3 +117,22 @@ rule get_domain_coverage:
         awk '{{t+=$2}}END{{print t}}' {input[1]} >> {output}
         """
         
+rule size_hist:
+    input:
+        "{species}/{version}/domains/{name}.bed"
+    output:
+        report("{species}/{version}/size_histograms/{name}.png", category="Size Distribution"),
+        report("{species}/{version}/logsize_histograms/{name}.png", category="Size Distribution")
+    shell:
+        """
+	python3 src/peak_histograms.py hist {input} {output[0]}
+	python3 src/peak_histograms.py loghist {input} {output[1]}
+	"""
+
+rule scaling_factor_analysis:
+    input:
+         "scaling_factor/top_5000_tss.csv"
+    output:
+        report("scaling_factor/inverse_scaling_factor.png")
+    shell:
+        "python src/analyse_scaling_factor.py {input} {output}"
