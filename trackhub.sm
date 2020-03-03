@@ -1,0 +1,62 @@
+track_hub = "../../var/www/html/knut/human_embryo_chipseq/trackhub/"
+track_types = ["domains.bb", "peaks.bb", "treat_pileup.bw", "control_lambda.bw", "qvalues.bw"]
+
+rule trackhub:
+    input:
+        expand(track_hub+"{{species}}/{{version}}_{name}_{track_type}", name=names, track_type=track_types)
+    output:
+        track_hub + "{species}/trackDb.txt"
+    shell:
+        'chiptools trackdb ' + ' '.join("v3_"+n for n in names) + '> {output}'
+
+rule create_bw_track:
+    input:
+        "{species}/{name}.bdg",
+        "{species}/data/chrom.sizes.txt"
+    output:
+        "{species}/{name}.bw"
+    wildcard_constraints:
+        species="[^/]+"
+    shell:
+        "./bdg2bw {input}"
+
+
+rule create_peak_track:
+    input:
+        "{species}/{name}_peaks.broadPeak",
+        "{species}/data/chrom.sizes.txt"
+    output:
+        "{species}/{name}_peaks.bb"
+    shell:
+        "./broadPeak2bb.sh {input}"
+
+rule create_domain_track:
+    input:
+        "{species}/{version}/domains/{name}.bed",
+        "{species}/data/chrom.sizes.txt"
+    output:
+        "{species}/{version}/domains/{name}.bb"
+    shell:
+        "./domains2bb.sh {input}"
+
+rule create_subhub:
+    input:
+        "{species}/{version}/domains/{name}.bb",
+        "{species}/{version}/macs_output/{name}_peaks.bb",
+        "{species}/{version}/macs_output/{name}_treat_pileup.bw",
+        "{species}/{version}/macs_output/{name}_control_lambda.bw",
+        "{species}/{version}/macs_output/{name}_qvalues.bw"
+    output:
+        track_hub + "{species}/{version}_{name}_domains.bb",
+        track_hub + "{species}/{version}_{name}_peaks.bb",
+        track_hub + "{species}/{version}_{name}_treat_pileup.bw",
+        track_hub + "{species}/{version}_{name}_control_lambda.bw",
+        track_hub + "{species}/{version}_{name}_qvalues.bw",
+    shell:
+        """
+        mv {input[0]} {output[0]}
+        mv {input[1]} {output[1]}
+        mv {input[2]} {output[2]}
+        mv {input[3]} {output[3]}
+        mv {input[4]} {output[4]}
+        """
