@@ -27,6 +27,8 @@ rule create_peak_track:
         "{species}/data/chrom.sizes.txt"
     output:
         "{species}/{name}_peaks.bb"
+    wildcard_constraints:
+        species="[^/]+"
     shell:
         "./broadPeak2bb.sh {input}"
 
@@ -36,6 +38,8 @@ rule create_domain_track:
         "{species}/data/chrom.sizes.txt"
     output:
         "{species}/{version}/domains/{name}.bb"
+    wildcard_constraints:
+        species="[^/]+"
     shell:
         "./domains2bb.sh {input}"
 

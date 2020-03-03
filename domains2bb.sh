@@ -13,7 +13,7 @@ fi
 F=$1
 G=$2
 
-bedtools slop -i ${F} -g ${G} -b 0 | ./bedClip stdin ${G} ${F}.clip
+bedtools slop -i ${F} -g ${G} -b 0 | bedClip stdin ${G} ${F}.clip
 
 # fix scores over 1000
 perl -pi -e 'chomp;@_=split;if ($_[4]>1000) {$_[4]=1000} $_=join("\t",@_)."\n"' ${F}.clip
