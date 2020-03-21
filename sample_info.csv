@@ -1,0 +1,29 @@
+filename,name,folder
+Pre-ZGA_K4_pool,Pre-ZGA,bed files/Pooled Stages
+Pre-ZGA_Input_pool,Pre-ZGA-In,bed files/Pooled Stages
+Oocyte_K4_pool_II,OocyteII,bed files/Pooled Stages
+Oocyte_In_pool_II,OocyteII-In,bed files/Pooled Stages
+bMII+_K4_pool,bMII+,Old/Other Species/Bed files
+bMII+_In_pool,bMII+-In,Old/Other Species/Bed files
+pMII+_K4_pool,pMII+,Old/Other Species/Bed files
+pMII+_In_pool,pMII+-In,Old/Other Species/Bed files
+zMII_K4_pool,zMII,Old/Other Species/Bed files
+zMII_In_417,zMII-In,Old/Other Species/Bed files
+M_pooled,M,bed files/Pooled biological replicates
+M_In,M-In,bed files/Pooled biological replicates
+GV_pool,GV,bed files/Pooled biological replicates
+GV_In,GV-In,bed files/Pooled biological replicates
+IVF_pool,IVF,bed files/Pooled biological replicates
+IVF_In,IVF-In,bed files/Pooled biological replicates
+ICSI_pool,ICSI,bed files/Pooled biological replicates
+ICSI_In,ICSI-In,bed files/Pooled biological replicates
+Day3G_pool,Day3G,bed files/Pooled biological replicates
+Day3G_In,Day3G-In,bed files/Pooled biological replicates
+Day2G_pool,Day2G,bed files/Pooled biological replicates
+Day2G_In,Day2G-In,bed files/Pooled biological replicates
+Zygote_pool,Zygote,bed files/Pooled biological replicates
+Zygote_In,Zygote-In,bed files/Pooled biological replicates
+BlastG_pool,BlastG,bed files/Pooled biological replicates
+BlastG_In,BlastG-In,bed files/Pooled biological replicates
+mm_MII_In_r1_pool,mMII,New/Other Species/Mouse Data/de novo mapped and pooled
+mm_MII_K4_r1,mMII,New/Other Species/Mouse Data/de novo mapped and pooled

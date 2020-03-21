@@ -1,11 +1,7 @@
-{"K4_pools": {"M": ["485", "591+584", "595+517", "621"]},
- "input_pools": {"M": ["486+471", "522+669"]},
- "stage_pools": {"Ooc2": ["M", "GV", "IVF"],
-		 "preZGA": ["Day2G", "Zygote"]}
+{"name": "human_embryo_chipseq",
+ "data_source": "dropbox",
+ "project": "Human oocyte H3K4me3 project/",
+ "token": "/home/knut/Projects/dropbox.token",
+ "analyses": ["dropbox", "peakcalling", "trackhub", "donwloads", "regions", "gc"]
 }
-
- 
-
-  
-  
  

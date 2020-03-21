@@ -1,0 +1,15 @@
+Name,Sample,AB,Input,Species,GB,GC
+Pre-ZGA_K4_pool,1,H3K4me3,Pre-ZGA_Input_pool,human,1,1
+Oocyte_K4_pool_II,1,H3K4me3,Oocyte_In_pool_II,human,1,1
+bMII+_K4_pool,2,H3K4me3,bMII+_In_pool,bovine,1,1
+pMII+_K4_pool,2,H3K4me3,pMII+_In_pool,porcine,1,1
+zMII_K4_pool,2,H3K4me3,zMII_In_417,zebra,1,1
+M_pooled,1,H3K4me3,M_In,human,1,1
+GV_pool,1,H3K4me3,GV_In,human,1,1
+IVF_pool,1,H3K4me3,IVF_In,human,1,1
+ICSI_pool,1,H3K4me3,ICSI_In,human,1,1
+Day3G_pool,1,H3K4me3,Day3G_In,human,1,1
+Day2G_pool,1,H3K4me3,Day2G_In,human,1,1
+Zygote_pool,1,H3K4me3,Zygote_In,human,1,1
+BlastG_pool,1,H3K4me3,BlastG_In,human,1,1
+mm_MII_K4_r1,1,H3K4me3,mm_MII_In_r1_pool,mouse,1,1

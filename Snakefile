@@ -62,7 +62,7 @@ rule peak_call_v3:
         "{species}/v3/macs_output/{name}_treat_pileup.bdg",
 	"{species}/v3/macs_output/{name}_control_lambda.bdg"
     shell:
-        "macs2 callpeak -t {input[0]} -c {input[1]} --bdg -n {wildcards.name} --broad --outdir {wildcards.species}/v3/macs_output/"
+        "macs2 callpeak -t {input[0]} -c {input[1]} --bdg -n {wildcards.name} --broad --outdir {wibldcards.species}/v3/macs_output/"
 
 rule get_qvalues:
     input:
