@@ -1,0 +1,6 @@
+{"name": "human_embryo_chipseq",
+ "data_source": "dropbox",
+ "project": "Human oocyte H3K4me3 project/",
+ "token": "/knut/Projects/dropbox.token",
+ "analyses": ["dropbox", "peakcalling", "trackhub", "donwloads", "regions", "gc"]
+}
